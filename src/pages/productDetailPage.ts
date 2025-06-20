@@ -39,7 +39,7 @@ class ProductDetailPage {
 
     async setProductSize(size: string) {
         await this.sizeSelector.waitFor({ state: 'visible' });
-        await this.sizeSelector.getByText(size).click();
+        await this.sizeSelector.getByText(size, {exact: true}).click();
         await this.page.waitForLoadState('networkidle');
     }
 
@@ -52,7 +52,6 @@ class ProductDetailPage {
     async setProductQuantity(quantity: number) {
         await this.quantitySelector.waitFor({ state: 'visible' });
         await this.quantitySelector.fill(quantity.toString());
-        await this.quantitySelector.press('Enter');
         await this.page.waitForLoadState('networkidle');
     }
 

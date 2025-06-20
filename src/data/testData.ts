@@ -2,15 +2,15 @@ export const customerData = {
   customer1: {
     firstName: 'John',
     lastName: 'Doe',
-    email: 'testCheckout' + Math.random().toString(36).substring(2, 15) + '@example.com',
+    email: 'testCheckout@example.com',
     streetAddress: '123 Main St',
     city: 'Anytown',
-    state: 'California',
-    zipCode: '12345',
-    phoneNumber: '123-456-7890',
+    state: 'Checkout',
+    zipCode: '2356HU',
+    phoneNumber: '622356784',
     country: 'NL'
   }
   // Add more customer data objects as needed
 }
 
-export const DiscountCode = '20poff';
+export const discountCode = '20poff';

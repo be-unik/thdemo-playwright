@@ -15,10 +15,11 @@ test.describe('Cart: ', () => {
         await homePage.goto();
 
         // Accept cookies if the popup appears
-        await page.getByRole('button', { name: 'AGREE', exact: true }).click();
+        await homePage.acceptCookies();
 
         // Navigate to Product List Page
         await productPage.goToProductListPage(["Gear", "Bags"]);
+        await homePage.acceptCookies();
         await expect(page.getByLabel('Items').getByText('Bags')).toBeVisible();
 
         // Filter products by category

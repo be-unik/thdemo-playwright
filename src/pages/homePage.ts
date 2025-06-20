@@ -19,9 +19,10 @@ class HomePage {
         if (await cookieButton.isVisible()) {
             await cookieButton.click();
             await this.page.waitForLoadState('networkidle');
-            console.log('Cookies accepted successfully.');
+            // console.log('Cookies accepted successfully.');
         } else {
-            console.log('Cookie button not found or already accepted.');
+            return 1;
+            // console.log('Cookie button not found or already accepted.');
         }
     }
 }

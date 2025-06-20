@@ -13,10 +13,11 @@ test.describe('Cart:', () => {
 
         // Navigate to the home page
         await homePage.goto();
-        await page.getByRole('button', { name: 'AGREE', exact: true }).click();
+        await homePage.acceptCookies();
 
         // Navigate to Product List Page
         await productPage.goToProductListPage(["Men", "Tops", "Jackets"]);
+        await homePage.acceptCookies();
         await expect(page.getByLabel('Items').getByText('Jackets')).toBeVisible();
 
         // Filter products by category

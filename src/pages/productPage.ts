@@ -16,7 +16,7 @@ class ProductPage {
         this.priceRangeFilter = (priceRange) => this.page.locator(`a[href*="price=${priceRange}"]`);
         this.ecoCollectionFilter = (ecoCollection) => this.page.locator(`a[href*="eco_collection=${ecoCollection}"]`);
         this.activityFilter = (activity) => this.page.locator(`a[href*="activity"]`).getByText(activity);
-        this.generalFilter = (filterValue) => this.page.getByRole('link', { name: filterValue }).locator('div');
+        this.generalFilter = (filterValue) => this.page.getByRole('link', { name: filterValue, exact: true }).locator('div');
     }
 
     async goToProductListPage(filterString: Array<string> = []) {
@@ -36,7 +36,7 @@ class ProductPage {
 
     async filterByCategory(category: string, categoryFilterValue: string) {
         const categoryFilters = this.categoryFilter(category);
-        console.log(`Filtering by category: ${category} with locator ${this.categoryFilter(category)}`);
+        // console.log(`Filtering by category: ${category} with locator ${this.categoryFilter(category)}`);
         await categoryFilters.waitFor({ state: 'visible' , timeout: 5000 });
         if (await categoryFilters.isVisible()) {
             // Filter products by category
@@ -58,7 +58,7 @@ class ProductPage {
         } else {
             filterValueLocator = this.generalFilter(categoryFilterValue);
         }
-        console.log(`Filtering by category: ${categoryFilterValue} with locator ${filterValueLocator}`);
+        // console.log(`Filtering by category: ${categoryFilterValue} with locator ${filterValueLocator}`);
         await filterValueLocator.waitFor({ state: 'visible' , timeout: 5000 });
         if (await filterValueLocator.isVisible()) {
             await filterValueLocator.click();

@@ -18,6 +18,11 @@ class CartPage {
     readonly applyDiscountCodeButton: Locator;
     readonly discountSuccessMessage: Locator;
     readonly proceedToCheckoutButton: Locator;
+    readonly shoppingCart: Locator;
+    readonly expandEstimateShippingCost: Locator; 
+    readonly countryDropdown: Locator;
+    readonly shippingCostEstimate: Locator;
+    readonly shippingCostInOrderSummary: Locator;
 
     constructor(private readonly page: Page) {
         this.urlString = '/checkout/cart/';
@@ -28,13 +33,18 @@ class CartPage {
         this.pName = this.page.locator('.product-item-name');
         this.pPrice = this.page.locator('.product-item-price');
         this.pDetails = this.page.locator('.product-item-details .item-options');
-        this.orderGrandTotal = this.page.locator('.grand .price');
+        this.orderGrandTotal = this.page.locator('.grand span.price');
         this.miniCartGrandTotal = this.page.locator('.minicart-items .price-container');
         this.discountSectionExpandButton = this.page.getByRole('heading', { name: 'Apply Discount Code' });
         this.applyDiscountCodeInput = this.page.getByRole('textbox', { name: 'Enter discount code' });
         this.applyDiscountCodeButton = this.page.getByRole('button', { name: 'Apply Discount' });
         this.discountSuccessMessage = this.page.locator('.message-success').locator('div');
         this.proceedToCheckoutButton = this.page.getByRole('button', { name: 'Proceed to Checkout' });
+        this.shoppingCart = this.page.getByRole('heading', { name: 'Shopping Cart' });
+        this.expandEstimateShippingCost = this.page.locator('#block-shipping-heading');
+        this.countryDropdown = this.page.locator('[name="country_id"]');
+        this.shippingCostEstimate = this.page.locator('#co-shipping-method-form span.price').last();
+        this.shippingCostInOrderSummary = this.page.locator('.shipping .amount .price');
     }
 
     async gotoCart() {
@@ -44,8 +54,9 @@ class CartPage {
 
     async getCartQuantity() {
         // Get the cart quantity from minicart icon
+        await this.miniCartQuantity.waitFor({ state: 'visible' });
         const cartQuantity = await this.miniCartQuantity.textContent();
-        return cartQuantity ? parseInt(cartQuantity, 10) : 0;
+        return parseInt(cartQuantity ?? '', 10) || 0;
     }
 
     async getLastProductAttributesInMiniCart() {
@@ -72,12 +83,13 @@ class CartPage {
     }
 
     async getOrderTotal() {
-        const orderTotal = await this.orderGrandTotal.textContent();
-        return parseInt(orderTotal ?? '', 10) ?? 0;
+        // await this.page.waitForLoadState('domcontentloaded');
+        const orderTotal = (await this.orderGrandTotal.textContent())?.replace('$', '');
+        return parseFloat(orderTotal ?? '') || 0;
     }
 
     async getMiniCartSubtotal() {
-        const miniCartSubtotal = await this.miniCartGrandTotal.textContent();
+        const miniCartSubtotal = (await this.miniCartGrandTotal.textContent())?.replace('$', '');
         return parseInt(miniCartSubtotal ?? '', 10) ?? 0;
     }
 
@@ -89,7 +101,8 @@ class CartPage {
         await this.applyDiscountCodeInput.click();
         await this.applyDiscountCodeInput.fill(code);
         await this.applyDiscountCodeButton.click();
-        await this.page.waitForLoadState('networkidle');
+        await this.page.waitForTimeout(5000); // Hard wait to allow the discount to be applied
+        await this.page.waitForLoadState('domcontentloaded');
     }
 
     async proceedToCheckout() {
@@ -98,7 +111,28 @@ class CartPage {
     }
 
     async getDiscountMessage() {
-        return this.discountSuccessMessage.textContent();
+        await this.discountSuccessMessage.waitFor({ state: 'visible' });
+        return await this.discountSuccessMessage.textContent();
+    }
+
+    async getShippingCostEstimate(country: string) {
+        await this.expandEstimateShippingCost.waitFor({ state: 'visible' });
+        await this.expandEstimateShippingCost.click();
+        await this.countryDropdown.waitFor({ state: 'visible' });
+        await this.countryDropdown.click();
+        await this.countryDropdown.selectOption(country);
+        await this.page.waitForLoadState('networkidle');
+        // Extract the shipping cost from the estimate
+        await this.shippingCostEstimate.waitFor({ state: 'visible' });
+        const shippingCost = (await this.shippingCostEstimate.textContent())?.replace('$', '');
+        return parseInt(shippingCost ?? '') || 0;
+    }
+
+    async getShippingCostInOrderSummary() {
+        await this.page.waitForTimeout(5000); // Wait for any potential loading
+        await this.shippingCostInOrderSummary.waitFor({ state: 'visible' });
+        const shippingCostInSummary = (await this.shippingCostInOrderSummary.textContent())?.replace('$', '');
+        return parseInt(shippingCostInSummary ?? '') || 0;
     }
 }
 export default CartPage;
