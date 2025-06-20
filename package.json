@@ -1,0 +1,23 @@
+{
+  "name": "thdemo-playwright",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/be-unik/thdemo-playwright.git"
+  },
+  "keywords": [],
+  "author": "Urmi Pal",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/be-unik/thdemo-playwright/issues"
+  },
+  "homepage": "https://github.com/be-unik/thdemo-playwright#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.53.0",
+    "@types/node": "^24.0.3"
+  }
+}
